@@ -1,79 +1,60 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
     [System.Serializable]
     public class AreaAudio
     {
-        [Tooltip("Set which area name for the sounds that will play in that area")]
         public string areaName;
-        public AudioClip ambientClip;
+        [HideInInspector] public AudioSource ambienceSource;
+        public AudioClip ambienceClip;
         [Range(0f, 1f)]
-        public float ambientVolume = 1.0f; // Volume slider for ambient sound
+        public float ambienceVolume = 1.0f;
+        [HideInInspector] public AudioSource musicSource;
         public AudioClip musicClip;
         [Range(0f, 1f)]
-        public float musicVolume = 1.0f; // Volume slider for music
-        public AudioClip[] uniqueSounds;
-        [Range(0f, 1f)]
-        public float uniqueVolume = 1.0f; // Volume slider for unique sounds
+        public float musicVolume = 1.0f;
     }
 
-    public AreaAudio[] areas;
+    public AreaAudio[] areas = new AreaAudio[]
+    {
+        new AreaAudio { areaName = "Main" },
+        new AreaAudio { areaName = "Swamp" },
+        new AreaAudio { areaName = "Campfire" },
+        new AreaAudio { areaName = "Cave" }
+    };
+
     public float fadeDuration = 2.0f;
     [Tooltip("Set which area will play on game start")]
-    public string startingArea;  // Field to set the starting area
+    public string startingArea;
 
-    private Dictionary<string, AudioSource> ambientSources = new Dictionary<string, AudioSource>();
-    private Dictionary<string, AudioSource> musicSources = new Dictionary<string, AudioSource>();
-    private Dictionary<string, AudioSource[]> uniqueSources = new Dictionary<string, AudioSource[]>();
     private string currentArea = "";
+    private Coroutine fadeCoroutine;
+
+    void Awake()
+    {
+        // Find and assign AudioSources
+        foreach (var area in areas)
+        {
+            area.ambienceSource = GameObject.Find($"{area.areaName}Ambience")?.GetComponent<AudioSource>();
+            area.musicSource = GameObject.Find($"{area.areaName}Music")?.GetComponent<AudioSource>();
+
+            if (area.ambienceSource == null)
+                Debug.LogWarning($"AudioManager: {area.areaName}Ambience AudioSource not found!");
+            if (area.musicSource == null)
+                Debug.LogWarning($"AudioManager: {area.areaName}Music AudioSource not found!");
+        }
+    }
 
     void Start()
     {
+        // Initialize AudioSources with correct settings and assigned clips
         foreach (var area in areas)
         {
-            if (area.ambientClip != null)
-            {
-                AudioSource ambientSource = gameObject.AddComponent<AudioSource>();
-                ambientSource.clip = area.ambientClip;
-                ambientSource.loop = true;
-                ambientSource.volume = 0;
-                ambientSource.dopplerLevel = 0; // Set Doppler level to 0
-                ambientSource.Play();
-                ambientSources[area.areaName] = ambientSource;
-            }
-
-            if (area.musicClip != null)
-            {
-                AudioSource musicSource = gameObject.AddComponent<AudioSource>();
-                musicSource.clip = area.musicClip;
-                musicSource.loop = true;
-                musicSource.volume = 0;
-                musicSource.dopplerLevel = 0; // Set Doppler level to 0
-                musicSource.Play();
-                musicSources[area.areaName] = musicSource;
-            }
-
-            if (area.uniqueSounds != null && area.uniqueSounds.Length > 0)
-            {
-                AudioSource[] uniqueSourceArray = new AudioSource[area.uniqueSounds.Length];
-                for (int i = 0; i < area.uniqueSounds.Length; i++)
-                {
-                    AudioSource uniqueSource = gameObject.AddComponent<AudioSource>();
-                    uniqueSource.clip = area.uniqueSounds[i];
-                    uniqueSource.loop = true;
-                    uniqueSource.volume = 0;
-                    uniqueSource.dopplerLevel = 0; // Set Doppler level to 0
-                    uniqueSource.Play();
-                    uniqueSourceArray[i] = uniqueSource;
-                }
-                uniqueSources[area.areaName] = uniqueSourceArray;
-            }
+            InitializeAudioSource(area.ambienceSource, area.ambienceClip);
+            InitializeAudioSource(area.musicSource, area.musicClip);
         }
-
-        //Debug.Log("AudioManager: Initialized with AudioSources.");
 
         // Set the starting area if specified
         if (!string.IsNullOrEmpty(startingArea))
@@ -82,173 +63,108 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    public void ChangeArea(string areaName, bool initialSetup = false)
+    void Update()
     {
-        //Debug.Log("AudioManager: Attempting to change area to: " + areaName);
-
-        if (currentArea == areaName && !initialSetup)
+        // Update volumes directly for the current area
+        var currentAreaAudio = System.Array.Find(areas, area => area.areaName == currentArea);
+        if (currentAreaAudio != null)
         {
-            //Debug.Log("AudioManager: Already in the area: " + areaName);
+            UpdateSourceVolume(currentAreaAudio.ambienceSource, currentAreaAudio.ambienceVolume);
+            UpdateSourceVolume(currentAreaAudio.musicSource, currentAreaAudio.musicVolume);
+        }
+    }
+
+    private void InitializeAudioSource(AudioSource source, AudioClip clip)
+    {
+        if (source != null)
+        {
+            source.clip = clip;
+            source.loop = true;
+            source.volume = 0;
+            source.dopplerLevel = 0;
+            if (clip != null)
+                source.Play();
+        }
+    }
+
+    private void UpdateSourceVolume(AudioSource source, float targetVolume)
+    {
+        if (source != null && source.clip != null)
+        {
+            source.volume = targetVolume;
+        }
+    }
+
+    public void ChangeArea(string newAreaName, bool initialSetup = false)
+    {
+        if (currentArea == newAreaName && !initialSetup)
+        {
             return;
         }
 
-        foreach (var area in areas)
+        // Stop any ongoing fade
+        if (fadeCoroutine != null)
         {
-            if (area.areaName == areaName)
-            {
-                //Debug.Log("AudioManager: Changing to area: " + area.areaName);
+            StopCoroutine(fadeCoroutine);
+        }
 
-                if (!string.IsNullOrEmpty(currentArea) && !initialSetup)
-                {
-                    StartCoroutine(FadeOutAudio(currentArea));
-                }
-
-                if (!initialSetup)
-                {
-                    StartCoroutine(FadeInAudio(area.areaName));
-                }
-                else
-                {
-                    SetInitialVolume(area.areaName);
-                }
-
-                currentArea = areaName;
-                break;
-            }
+        // If it's initial setup, set volumes immediately; otherwise, start fade
+        if (initialSetup)
+        {
+            SetAreaVolumes(newAreaName);
+            currentArea = newAreaName;
+        }
+        else
+        {
+            fadeCoroutine = StartCoroutine(FadeBetweenAreas(currentArea, newAreaName));
         }
     }
 
-    private void SetInitialVolume(string areaName)
+    private void SetAreaVolumes(string areaName)
     {
         foreach (var area in areas)
         {
-            if (area.areaName == areaName)
-            {
-                if (ambientSources.ContainsKey(areaName))
-                {
-                    ambientSources[areaName].volume = area.ambientVolume;
-                }
-
-                if (musicSources.ContainsKey(areaName))
-                {
-                    musicSources[areaName].volume = area.musicVolume;
-                }
-
-                if (uniqueSources.ContainsKey(areaName))
-                {
-                    foreach (var uniqueSource in uniqueSources[areaName])
-                    {
-                        uniqueSource.volume = area.uniqueVolume;
-                    }
-                }
-                break;
-            }
+            float targetVolume = (area.areaName == areaName) ? 1 : 0;
+            UpdateSourceVolume(area.ambienceSource, targetVolume * area.ambienceVolume);
+            UpdateSourceVolume(area.musicSource, targetVolume * area.musicVolume);
         }
     }
 
-    private IEnumerator FadeInAudio(string areaName)
+    private IEnumerator FadeBetweenAreas(string oldAreaName, string newAreaName)
     {
-        float currentTime = 0;
+        float elapsedTime = 0;
+        var oldArea = System.Array.Find(areas, a => a.areaName == oldAreaName);
+        var newArea = System.Array.Find(areas, a => a.areaName == newAreaName);
 
-        foreach (var area in areas)
+        if (oldArea != null && newArea != null)
         {
-            if (area.areaName == areaName)
+            while (elapsedTime < fadeDuration)
             {
-                if (ambientSources.ContainsKey(areaName))
-                {
-                    AudioSource ambientSource = ambientSources[areaName];
-                    while (currentTime < fadeDuration)
-                    {
-                        currentTime += Time.deltaTime;
-                        ambientSource.volume = Mathf.Lerp(0, area.ambientVolume, currentTime / fadeDuration);
-                        yield return null;
-                    }
-                    ambientSource.volume = area.ambientVolume;
-                }
+                elapsedTime += Time.deltaTime;
+                float t = elapsedTime / fadeDuration;
 
-                if (musicSources.ContainsKey(areaName))
-                {
-                    AudioSource musicSource = musicSources[areaName];
-                    currentTime = 0;
-                    while (currentTime < fadeDuration)
-                    {
-                        currentTime += Time.deltaTime;
-                        musicSource.volume = Mathf.Lerp(0, area.musicVolume, currentTime / fadeDuration);
-                        yield return null;
-                    }
-                    musicSource.volume = area.musicVolume;
-                }
+                // Fade out old area
+                if (oldArea.ambienceSource != null)
+                    oldArea.ambienceSource.volume = Mathf.Lerp(oldArea.ambienceVolume, 0, t);
+                if (oldArea.musicSource != null)
+                    oldArea.musicSource.volume = Mathf.Lerp(oldArea.musicVolume, 0, t);
 
-                if (uniqueSources.ContainsKey(areaName))
-                {
-                    AudioSource[] uniqueSourceArray = uniqueSources[areaName];
-                    foreach (var uniqueSource in uniqueSourceArray)
-                    {
-                        currentTime = 0;
-                        while (currentTime < fadeDuration)
-                        {
-                            currentTime += Time.deltaTime;
-                            uniqueSource.volume = Mathf.Lerp(0, area.uniqueVolume, currentTime / fadeDuration);
-                            yield return null;
-                        }
-                        uniqueSource.volume = area.uniqueVolume;
-                    }
-                }
-                break;
+                // Fade in new area
+                if (newArea.ambienceSource != null)
+                    newArea.ambienceSource.volume = Mathf.Lerp(0, newArea.ambienceVolume, t);
+                if (newArea.musicSource != null)
+                    newArea.musicSource.volume = Mathf.Lerp(0, newArea.musicVolume, t);
+
+                yield return null;
             }
+
+            // Ensure final volumes are set exactly
+            UpdateSourceVolume(oldArea.ambienceSource, 0);
+            UpdateSourceVolume(oldArea.musicSource, 0);
+            UpdateSourceVolume(newArea.ambienceSource, newArea.ambienceVolume);
+            UpdateSourceVolume(newArea.musicSource, newArea.musicVolume);
         }
-    }
 
-    private IEnumerator FadeOutAudio(string areaName)
-    {
-        float currentTime = 0;
-
-        foreach (var area in areas)
-        {
-            if (area.areaName == areaName)
-            {
-                if (ambientSources.ContainsKey(areaName))
-                {
-                    AudioSource ambientSource = ambientSources[areaName];
-                    while (currentTime < fadeDuration)
-                    {
-                        currentTime += Time.deltaTime;
-                        ambientSource.volume = Mathf.Lerp(area.ambientVolume, 0, currentTime / fadeDuration);
-                        yield return null;
-                    }
-                    ambientSource.volume = 0;
-                }
-
-                if (musicSources.ContainsKey(areaName))
-                {
-                    AudioSource musicSource = musicSources[areaName];
-                    currentTime = 0;
-                    while (currentTime < fadeDuration)
-                    {
-                        currentTime += Time.deltaTime;
-                        musicSource.volume = Mathf.Lerp(area.musicVolume, 0, currentTime / fadeDuration);
-                        yield return null;
-                    }
-                    musicSource.volume = 0;
-                }
-
-                if (uniqueSources.ContainsKey(areaName))
-                {
-                    AudioSource[] uniqueSourceArray = uniqueSources[areaName];
-                    foreach (var uniqueSource in uniqueSourceArray)
-                    {
-                        currentTime = 0;
-                        while (currentTime < fadeDuration)
-                        {
-                            currentTime += Time.deltaTime;
-                            uniqueSource.volume = Mathf.Lerp(area.uniqueVolume, 0, currentTime / fadeDuration);
-                            yield return null;
-                        }
-                        uniqueSource.volume = 0;
-                    }
-                }
-                break;
-            }
-        }
+        currentArea = newAreaName;
     }
 }

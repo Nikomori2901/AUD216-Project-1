@@ -1,22 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DestroyOnPickupAndPlaySound : MonoBehaviour
 {
+    private AudioSource myAudioSource;
+    private MeshRenderer meshRenderer;
+    private BoxCollider boxCollider;
 
-    public AudioSource myAudioSource;
-    public MeshRenderer meshRenderer;
-    public BoxCollider boxCollider;
-
-
-    public void OnTriggerEnter(Collider other)
+    private void Awake()
     {
-        if (myAudioSource.clip != null)
+        myAudioSource = GetComponent<AudioSource>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        boxCollider = GetComponent<BoxCollider>();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (myAudioSource != null && myAudioSource.clip != null)
         {
             myAudioSource.Play();
         }
-        meshRenderer.enabled=false;
-        boxCollider.enabled = false;
+
+        if (meshRenderer != null)
+        {
+            meshRenderer.enabled = false;
+        }
+
+        if (boxCollider != null)
+        {
+            boxCollider.enabled = false;
+        }
     }
 }
