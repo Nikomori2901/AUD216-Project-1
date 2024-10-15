@@ -22,7 +22,8 @@ public class AudioManager : MonoBehaviour
         new AreaAudio { areaName = "Main" },
         new AreaAudio { areaName = "Swamp" },
         new AreaAudio { areaName = "Campfire" },
-        new AreaAudio { areaName = "Cave" }
+        new AreaAudio { areaName = "Cave" },
+        new AreaAudio { areaName = "Studio"}
     };
 
     public float fadeDuration = 2.0f;

@@ -15,7 +15,7 @@ public class ScoringSystem : MonoBehaviour
 
     void Update()
     {
-        scoreText.GetComponent<Text>().text = "Pickups: " + theScore + "/4";
+        scoreText.GetComponent<Text>().text = "Skulls: " + theScore + "/4";
 
         if (theScore == 4)
         {
@@ -30,6 +30,11 @@ public class ScoringSystem : MonoBehaviour
     private void UnlockCave()
     {
         theScore = 0;
+        scoreText.SetActive(false);
         caveEntrance.StartOpening();
+
+        // EXTRA GOALS
+        // Close Eyes Effect/Camera Change, to disguise swapping material
+        // Change Sky To Dark
     }
 }

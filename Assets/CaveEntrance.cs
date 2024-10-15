@@ -29,7 +29,7 @@ public class CaveEntrance : MonoBehaviour
     }
     private IEnumerator Open()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3);
         audioSource.clip = doorSliding;
         audioSource.loop = true;
         audioSource.Play();
@@ -46,8 +46,9 @@ public class CaveEntrance : MonoBehaviour
 
     private void FinishOpening()
     {
-        audioSource.clip = doorOpen;
-        audioSource.loop = false;
-        audioSource.Play();
+        audioSource.Stop();
+        //audioSource.clip = doorOpen;
+        //audioSource.loop = false;
+        //audioSource.Play();
     }
 }
