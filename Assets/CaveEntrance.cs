@@ -6,30 +6,48 @@ using VInspector;
 public class CaveEntrance : MonoBehaviour
 {
     AudioSource audioSource;
-    AudioClip doorSliding;
-    AudioClip doorOpen;
+    [SerializeField] AudioClip doorStart;
+    [SerializeField] AudioClip doorSliding;
+    [SerializeField] AudioClip doorOpen;
 
+    [SerializeField] Vector3 closedPosition;
+
+    [SerializeField] float moveSpeed;
 
     private void Start()
     {
-        GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     [Button]
-    private void StartOpening()
+    public void StartOpening()
     {
+        Debug.Log("Start Moving");
         StartCoroutine(Open());
-        // start sliding door down and start looping slide noise
+        audioSource.clip = doorStart;
+        audioSource.Play();
     }
     private IEnumerator Open()
     {
-        // slide door down
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(2);
+        audioSource.clip = doorSliding;
+        audioSource.loop = true;
+        audioSource.Play();
+
+        while (transform.position != closedPosition)
+        {
+            Debug.Log("Moving");
+            transform.position = Vector3.MoveTowards(transform.position, closedPosition, moveSpeed * Time.deltaTime);
+            yield return new WaitForEndOfFrame();
+        }
+
+        FinishOpening();
     }
 
     private void FinishOpening()
     {
-        // play door slam sound
-        // stop sliding noise
+        audioSource.clip = doorOpen;
+        audioSource.loop = false;
+        audioSource.Play();
     }
 }

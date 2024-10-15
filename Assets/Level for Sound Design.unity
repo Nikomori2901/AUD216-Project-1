@@ -2100,7 +2100,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 8426258057616649091, guid: 855e36c5d423f44d6a9571cbdf1b2686, type: 2}
   m_audioClip: {fileID: 8300000, guid: ed6e204904c3ce8449e34e6d71202ebe, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -5235,6 +5235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3643a916cff8445078791e0ac96f2496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambiance: {fileID: 1719520083}
 --- !u!199 &138461675
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -63789,6 +63790,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MountainSkybox (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 2d340581e3fa79c48b1401265c761387, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 2d340581e3fa79c48b1401265c761387, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -67241,6 +67246,10 @@ PrefabInstance:
     - target: {fileID: 1804266959066388, guid: d7348193d18053242b67736aafdf8c03, type: 3}
       propertyPath: m_Name
       value: SM_Prop_Cloud_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1804266959066388, guid: d7348193d18053242b67736aafdf8c03, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1804266959066388, guid: d7348193d18053242b67736aafdf8c03, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -78728,6 +78737,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3643a916cff8445078791e0ac96f2496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambiance: {fileID: 2117739928}
 --- !u!114 &1606099801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83979,6 +83989,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3643a916cff8445078791e0ac96f2496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambiance: {fileID: 2050263473}
 --- !u!114 &1609924500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88415,6 +88426,11 @@ Transform:
 --- !u!4 &1719520081 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6114922446427624908, guid: 93cd61e1d9de6f34ea7571db783b7dcd, type: 3}
+  m_PrefabInstance: {fileID: 3284954562033104697}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &1719520083 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4182075997694093169, guid: 93cd61e1d9de6f34ea7571db783b7dcd, type: 3}
   m_PrefabInstance: {fileID: 3284954562033104697}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1720644159
@@ -94887,6 +94903,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3643a916cff8445078791e0ac96f2496, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ambiance: {fileID: 2041837647}
 --- !u!114 &1753859652
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96991,7 +97008,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 8426258057616649091, guid: 855e36c5d423f44d6a9571cbdf1b2686, type: 2}
   m_audioClip: {fileID: 8300000, guid: 24196b73168d8e34ca6aa5cd6ddbacbd, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -106296,8 +106313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 1135643893}
-  activateChestText: {fileID: 48283177}
-  activateChest: {fileID: 7952847965522264328}
+  caveEntrance: {fileID: 2042345684}
 --- !u!4 &1924878747
 Transform:
   m_ObjectHideFlags: 0
@@ -110832,6 +110848,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4059369158113820, guid: ef8827edf81d4f34aace1bd2d0c358ff, type: 3}
   m_PrefabInstance: {fileID: 2040883609}
   m_PrefabAsset: {fileID: 0}
+--- !u!82 &2041837647 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4182075997694093169, guid: 93cd61e1d9de6f34ea7571db783b7dcd, type: 3}
+  m_PrefabInstance: {fileID: 1841928461}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2042345678
 GameObject:
   m_ObjectHideFlags: 0
@@ -110852,7 +110873,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &2042345679
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110951,7 +110972,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -110960,7 +110981,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 6.2024727
-  MaxDistance: 25
+  MaxDistance: 100
   Pan2D: 0
   rolloffMode: 2
   BypassEffects: 0
@@ -110995,7 +111016,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -111010,7 +111031,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 0.25
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -111047,6 +111068,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c6be48c8176a4f4992fb910c7f01e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doorStart: {fileID: 8300000, guid: dae6bb21d30fc3449b53d19fc72628b1, type: 3}
+  doorSliding: {fileID: 8300000, guid: 48a0b7ba4e074cb48b724f8561842e9e, type: 3}
+  doorOpen: {fileID: 8300000, guid: 5541fe6c6fc535d44bb082843af40bb2, type: 3}
+  closedPosition: {x: -13.512, y: -4, z: -47.953}
+  moveSpeed: 0.25
 --- !u!1001 &2044942498
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111290,6 +111316,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1649503142}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &2050263473 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4182075997694093169, guid: 93cd61e1d9de6f34ea7571db783b7dcd, type: 3}
+  m_PrefabInstance: {fileID: 1660809078}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2051831275
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -114131,6 +114162,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4951144519254920, guid: 42d15d42149ed484d8aea06290796e07, type: 3}
   m_PrefabInstance: {fileID: 2117294227}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &2117739928 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 4182075997694093169, guid: 93cd61e1d9de6f34ea7571db783b7dcd, type: 3}
+  m_PrefabInstance: {fileID: 558297399}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &2119270932
 GameObject:
@@ -132737,11 +132773,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &7952847965522264328 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2239961167771578594, guid: 3391e9949e8573d4e87a0e30484cd239, type: 3}
-  m_PrefabInstance: {fileID: 8069276302243205942}
-  m_PrefabAsset: {fileID: 0}
 --- !u!33 &7958166289361032014
 MeshFilter:
   m_ObjectHideFlags: 0
